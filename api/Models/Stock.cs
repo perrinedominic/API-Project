@@ -8,7 +8,7 @@ namespace api.Models
 {
     public class Stock
     {
-                public int Id { get; set; }
+        public int Id { get; set; }
         public string Services { get; set; } = String.Empty;
         public string CompanyName { get; set; } = String.Empty;
         [Column(TypeName = "decimal(18,2)")]
