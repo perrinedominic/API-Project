@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
+using api.Mappers;
 using api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +28,9 @@ namespace api.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var stocks = _context.Stocks.Take(5).ToList();
+            var stocks = _context.Stocks.ToList()
+            .Select(x => x.ToStockDto());
+
             return Ok(stocks);
         }
 
@@ -38,7 +41,7 @@ namespace api.Controllers
             if (stock == null)
                 return NotFound();
 
-            return Ok(stock);
+            return Ok(stock.ToStockDto());
         }
 
     }
