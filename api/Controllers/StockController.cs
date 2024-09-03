@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
+using api.DTOs.Stock;
 using api.Mappers;
 using api.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -31,7 +32,8 @@ namespace api.Controllers
             var stocks = _context.Stocks.ToList()
             .Select(x => x.ToStockDto());
 
-            return Ok(stocks);
+            // return 5 stocks
+            return Ok(stocks.Take(5));
         }
 
         [HttpGet("{Id}")]
@@ -44,5 +46,16 @@ namespace api.Controllers
             return Ok(stock.ToStockDto());
         }
 
+        [HttpPost]
+        public IActionResult Create([FromBody] CreateStockRequestDto stockDto)
+        {
+            var stockModel = stockDto.ToStockFromCreateDTO();
+            _context.Stocks.Add(stockModel);
+            _context.SaveChanges();
+
+            // Passes in new stockModel object into GetById() using the id
+            // Returns in form of ToStockDto
+            return CreatedAtAction(nameof(GetById), new { id = stockModel.Id }, stockModel.ToStockDto());
+        }
     }
 }
