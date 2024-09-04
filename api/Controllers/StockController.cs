@@ -36,7 +36,7 @@ namespace api.Controllers
             return Ok(stocks.Take(5));
         }
 
-        [HttpGet("{Id}")]
+        [HttpGet("{id:int}")]
         public IActionResult GetById([FromRoute] int id)
         {
             var stock = _context.Stocks.Find(id);
@@ -56,6 +56,29 @@ namespace api.Controllers
             // Passes in new stockModel object into GetById() using the id
             // Returns in form of ToStockDto
             return CreatedAtAction(nameof(GetById), new { id = stockModel.Id }, stockModel.ToStockDto());
+        }
+
+        [HttpPut]
+        [Route("{id:int}")]
+        public IActionResult Update([FromRoute] int id, [FromBody] UpdateStockRequestDto updateDto)
+        {
+            var stockModel = _context.Stocks.FirstOrDefault(x => x.Id == id);
+
+            if (stockModel == null)
+            {
+                return NotFound();
+            }
+
+            stockModel.Symbol = updateDto.Symbol;
+            stockModel.Name = updateDto.Name;
+            stockModel.CurrentPrice = updateDto.CurrentPrice;
+            stockModel.Industry = updateDto.Industry;
+            stockModel.MarketCap = updateDto.MarketCap;
+            stockModel.Sector = updateDto.Sector;
+
+            _context.SaveChanges();
+
+            return Ok(stockModel.ToStockDto());
         }
     }
 }
